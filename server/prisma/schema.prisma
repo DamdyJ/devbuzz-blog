@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid())
+  username   String    @unique
+  email      String    @unique
+  password   String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  article    Article[]
+  profile    Profile?
+  session    Session?
+  comment    Comment[]
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  user_id       String   @unique
+  user_bio      String
+  profile_image String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  user          User     @relation(fields: [user_id], references: [id])
+}
+
+model Article {
+  id         String    @id @default(uuid())
+  user_id    String
+  title      String    @db.VarChar(50)
+  tag_id     String
+  thumbnail  String
+  content    String    @db.Text
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  user       User      @relation(fields: [user_id], references: [id])
+  tag        Tag       @relation(fields: [tag_id], references: [id])
+  comment    Comment[]
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  user_id       String   @unique
+  refresh_token String
+  created_at    DateTime @default(now())
+  expired_at    DateTime
+  is_revoked    Boolean  @default(false)
+  user          User     @relation(fields: [user_id], references: [id])
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  user_id    String
+  article_id String
+  comment    String
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id])
+  article    Article? @relation(fields: [article_id], references: [id])
+
+  @@index([user_id])
+  @@index([article_id])
+}
+
+model Tag {
+  id      String    @id @default(uuid())
+  name    String    @unique
+  article Article[]
+}
