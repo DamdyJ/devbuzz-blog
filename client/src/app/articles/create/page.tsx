@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInSchema } from "@/utils/validations/signin-validation";
+import { SignUpSchema } from "@/utils/validations/signup-validation";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -16,29 +16,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import fetchSignIn, { ISignIn } from "../../api/signin";
 
-export default function SignInPage() {
+export default function CreateArticlePage() {
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof SignInSchema>>({
-        resolver: zodResolver(SignInSchema),
+    const form = useForm<z.infer<typeof SignUpSchema>>({
+        resolver: zodResolver(SignUpSchema),
         defaultValues: {
+            username: "",
             email: "",
             password: "",
         },
     });
 
-    async function onSubmit(data: z.infer<typeof SignInSchema>) {
+    async function onSubmit(data: z.infer<typeof SignUpSchema>) {
         try {
-            await fetchSignIn(data as ISignIn);
             toast({
-                title: "Sign in successful",
+                title: "Sign up successful",
             });
             router.push("/");
         } catch (error) {
             toast({
-                title: "Sign in failed",
+                title: "Sign up failed",
                 description: "Please check your credentials and try again.",
             });
         }
@@ -53,6 +52,21 @@ export default function SignInPage() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="w-3/4 space-y-4 md:w-2/3 md:space-y-6 lg:w-1/2"
                 >
+                    <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <Input
+                                    type="text"
+                                    placeholder="username"
+                                    {...field}
+                                />
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="email"

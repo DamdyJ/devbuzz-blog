@@ -14,6 +14,7 @@ import ProfileService from "../services/profile.service";
 import { defaultProfile } from "../utils/randomProfile.utils";
 import { PROFILE } from "../constants";
 import { inject } from "inversify";
+import { error } from "console";
 
 @controller("/auth")
 export default class AuthController {
@@ -178,7 +179,9 @@ export default class AuthController {
         try {
             res.clearCookie("refreshToken");
             res.clearCookie("accessToken");
-            return res.status(HttpStatusCodeEnum.OK).json({ message: "Logout" });
+            return res
+                .status(HttpStatusCodeEnum.OK)
+                .json({ message: "Logout" });
         } catch (error) {
             return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
                 error,
@@ -222,7 +225,14 @@ export default class AuthController {
     @httpGet("/refresh-token")
     public async getNewAccessToken(req: Request, res: Response) {
         try {
+            const accessToken = req.cookies.accessToken;
             const refreshToken = req.cookies.refreshToken;
+
+            if (!accessToken) {
+                const verifyToken =
+                    this.jsonWebTokenUtil.verifyToken(accessToken);
+                return res.status(HttpStatusCodeEnum.OK).json(verifyToken);
+            }
 
             if (!refreshToken) {
                 return res.status(HttpStatusCodeEnum.UNAUTHORIZED).json({
@@ -251,11 +261,11 @@ export default class AuthController {
                 });
             }
 
-            const accessToken = this.jsonWebTokenUtil.createAccessToken(
+            const newAccessToken = this.jsonWebTokenUtil.createAccessToken(
                 { id: session?.user_id },
                 ExpiresInEnum.ONE_HOUR
             );
-            res.cookie("accessToken", accessToken, {
+            res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
                 maxAge: 60 * 60 * 1000,
             });
@@ -270,9 +280,23 @@ export default class AuthController {
         }
     }
 
-    @httpGet("/token", authenticeToken)
+    @httpGet("/verify-token")
     public verifyToken(req: Request, res: Response) {
         try {
+            const accessToken = req.cookies.accessToken;
+            if (!accessToken) {
+                return res
+                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .json({ error: ErrorMessageEnum.NOT_FOUND });
+            }
+            const verifyToken = this.jsonWebTokenUtil.verifyToken(accessToken);
+
+            if (!verifyToken) {
+                return res
+                    .status(HttpStatusCodeEnum.UNAUTHORIZED)
+                    .json({ error: ErrorMessageEnum.UNAUTHORIZED });
+            }
+
             return res
                 .status(HttpStatusCodeEnum.OK)
                 .json({ message: SuccessMessageEnum.ACCESS_GRANTED });

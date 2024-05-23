@@ -41,7 +41,6 @@ export default function SignUpPage() {
             toast({
                 title: "Sign up failed",
                 description: "Please check your credentials and try again.",
-                status: "error",
             });
         }
     }
