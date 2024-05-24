@@ -15,7 +15,6 @@ import { upload } from "../middlewares/multer.middleware";
 import { inject } from "inversify";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import TagService from "../services/tag.service";
-import { error } from "console";
 
 @controller("/article")
 export default class ArticleController {
@@ -136,11 +135,15 @@ export default class ArticleController {
     @httpPost("/create", upload.single("thumbnail"))
     public async createArticle(req: Request, res: Response) {
         try {
-            const {  title, tagId, content } = req.body;
+            const { title, tag, content } = req.body;
             const thumbnail = req.file?.path || "";
+            console.log(`Title: ${title}`)
+            console.log(`Tag: ${tag}`)
+            console.log(`Thumbnail: ${thumbnail}`)
+            console.log(`Content: ${content}`)
             // get cookie
-            const accessToken  = req.cookies.accessToken;
-
+            const accessToken = req.cookies.accessToken;
+            console.log(`AcessToken: ${accessToken}`)
             // verifty cookie
             if (!accessToken) {
                 return res
@@ -158,25 +161,21 @@ export default class ArticleController {
             }
 
             const payload = this.jsonWebTokenUtil.decodeToken(accessToken);
-            console.log(`payload : ${payload}`);
-            // const tagName = await this.tagService.findTagbyId(tagId);
-            // if (!tagName) {
-            //     return res.status(HttpStatusCodeEnum.NOT_FOUND).json({
-            //         error: ErrorMessageEnum.NOT_FOUND,
-            //         message: "Tag is not found",
-            //     });
-            // }
+            const tagId = await this.tagService.findTagbyName(tag);
+            if (!tagId) {
+                return res
+                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .json({ message: ErrorMessageEnum.NOT_FOUND });
+            }
             const article = await this.articleService.create(
                 payload,
                 title,
-                tagId,
+                tagId.id,
                 thumbnail,
                 content
             );
 
-            return res
-                .status(HttpStatusCodeEnum.OK)
-                .json({ article });
+            return res.status(HttpStatusCodeEnum.OK).json({ article });
         } catch (error) {
             return res
                 .status(HttpStatusCodeEnum.BAD_REQUEST)

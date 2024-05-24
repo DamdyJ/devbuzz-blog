@@ -1,66 +1,101 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SignUpSchema } from "@/utils/validations/signup-validation";
-import { Button } from "@/components/ui/button";
 import {
     Form,
     FormField,
     FormItem,
     FormLabel,
-    FormDescription,
+    FormControl,
     FormMessage,
 } from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
+import fetchCreateArticle, { IArticle } from "@/api/articles";
+import { FormEvent } from "react";
+import {
+    ArticleSchema,
+    Tag,
+} from "@/utils/validations/create-article-validation";
+import { useRouter } from "next/navigation";
 
 export default function CreateArticlePage() {
     const router = useRouter();
-
-    const form = useForm<z.infer<typeof SignUpSchema>>({
-        resolver: zodResolver(SignUpSchema),
+    const tagValues: string[] = Object.values(Tag).filter(
+        (value) => value !== Tag.DEFAULT
+    );
+    const form = useForm<z.infer<typeof ArticleSchema>>({
+        resolver: zodResolver(ArticleSchema),
         defaultValues: {
-            username: "",
-            email: "",
-            password: "",
+            title: "",
+            thumbnail: "",
+            tag: Tag.DEFAULT,
+            content: "",
         },
     });
 
-    async function onSubmit(data: z.infer<typeof SignUpSchema>) {
+    async function onSubmit(data: z.infer<typeof ArticleSchema>) {
         try {
+            const formData = new FormData();
+            formData.append("title", data.title);
+            formData.append("tag", data.tag);
+            formData.append("content", data.content);
+
+            const fileInput = document.getElementById(
+                "thumbnail"
+            ) as HTMLInputElement;
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                formData.append("thumbnail", file);
+            }
+
+            const response = await fetchCreateArticle(formData);
             toast({
-                title: "Sign up successful",
+                title: "Post successful",
             });
-            router.push("/");
+            router.push(`/articles/${response.article.id}`);
         } catch (error) {
+            console.log(error);
             toast({
-                title: "Sign up failed",
-                description: "Please check your credentials and try again.",
+                title: "Post failed",
+                description: "Please check your internet and try again.",
             });
         }
     }
 
     return (
         <div className="w-full min-h-screen flex gap-4 flex-col items-center justify-center">
-            <h1 className="text-3xl font-bold md:text-4xl">Welcome back</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-left lg:w-1/2">
+                Create
+            </h1>
             <Form {...form}>
                 <form
-                    method="POST"
                     onSubmit={form.handleSubmit(onSubmit)}
+                    method="POST"
+                    encType="multipart/form-data"
                     className="w-3/4 space-y-4 md:w-2/3 md:space-y-6 lg:w-1/2"
                 >
                     <FormField
                         control={form.control}
-                        name="username"
+                        name="title"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Username</FormLabel>
+                                <FormLabel>Title</FormLabel>
                                 <Input
                                     type="text"
-                                    placeholder="username"
+                                    placeholder="title"
+                                    required
                                     {...field}
                                 />
                                 <FormMessage />
@@ -69,28 +104,60 @@ export default function CreateArticlePage() {
                     />
                     <FormField
                         control={form.control}
-                        name="email"
+                        name="thumbnail"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>Thumbnail</FormLabel>
                                 <Input
-                                    type="email"
-                                    placeholder="name@example.com"
+                                    id="thumbnail"
+                                    type="file"
+                                    accept="image/*"
+                                    placeholder="image"
+                                    required
                                     {...field}
                                 />
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
                     <FormField
                         control={form.control}
-                        name="password"
+                        name="tag"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <Input
-                                    type="password"
-                                    placeholder="password"
+                                <FormLabel>Tag</FormLabel>
+                                <Select
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                    }}
+                                    value={field.value || ""}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select tag" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {tagValues.map((tag) => (
+                                            <SelectItem key={tag} value={tag}>
+                                                {tag}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="content"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Content</FormLabel>
+                                <Textarea
+                                    placeholder="Share your thoughts and insights..."
+                                    className="resize-none min-h-48"
                                     {...field}
                                 />
                                 <FormMessage />
@@ -98,7 +165,7 @@ export default function CreateArticlePage() {
                         )}
                     />
                     <Button className="w-full" type="submit">
-                        Signin
+                        Post
                     </Button>
                 </form>
             </Form>

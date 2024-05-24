@@ -225,14 +225,7 @@ export default class AuthController {
     @httpGet("/refresh-token")
     public async getNewAccessToken(req: Request, res: Response) {
         try {
-            const accessToken = req.cookies.accessToken;
             const refreshToken = req.cookies.refreshToken;
-
-            if (!accessToken) {
-                const verifyToken =
-                    this.jsonWebTokenUtil.verifyToken(accessToken);
-                return res.status(HttpStatusCodeEnum.OK).json(verifyToken);
-            }
 
             if (!refreshToken) {
                 return res.status(HttpStatusCodeEnum.UNAUTHORIZED).json({
@@ -261,11 +254,11 @@ export default class AuthController {
                 });
             }
 
-            const newAccessToken = this.jsonWebTokenUtil.createAccessToken(
+            const accessToken = this.jsonWebTokenUtil.createAccessToken(
                 { id: session?.user_id },
                 ExpiresInEnum.ONE_HOUR
             );
-            res.cookie("accessToken", newAccessToken, {
+            res.cookie("accessToken", accessToken, {
                 httpOnly: true,
                 maxAge: 60 * 60 * 1000,
             });

@@ -3,18 +3,17 @@ import { URL } from "../constant";
 
 export interface IArticle {
     title: string;
-    tagId: string;
+    tag: string;
     thumbnail: string;
     content: string;
 }
 
-export default async function fetchSignUp(article: IArticle) {
+export default async function fetchCreateArticle(article: any) {
     try {
-        const response = await axios.post(URL.SIGNUP, article, {
+        const response = await axios.post(URL.CREATE_ARTICLE, article, {
             withCredentials: true,
         });
         const data = await response.data;
-        console.log(data)
         return data;
     } catch (error) {
         if (error instanceof Error) {
