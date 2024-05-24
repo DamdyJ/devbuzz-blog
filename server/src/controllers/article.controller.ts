@@ -15,6 +15,7 @@ import { upload } from "../middlewares/multer.middleware";
 import { inject } from "inversify";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import TagService from "../services/tag.service";
+import UserService from "../services/user.service";
 
 @controller("/article")
 export default class ArticleController {
@@ -23,7 +24,8 @@ export default class ArticleController {
         @inject(SessionService) private readonly sessionService: SessionService,
         @inject(JsonWebTokenUtil)
         private readonly jsonWebTokenUtil: JsonWebTokenUtil,
-        @inject(TagService) private readonly tagService: TagService
+        @inject(TagService) private readonly tagService: TagService,
+        @inject(UserService) private readonly userService: UserService
     ) {}
 
     @httpGet("/")
@@ -124,7 +126,20 @@ export default class ArticleController {
                     message: "Article is not found",
                 });
             }
-            return res.status(HttpStatusCodeEnum.OK).json({ article });
+            const user = await this.userService.findUserById(article.user_id);
+            const tag = await this.tagService.findTagbyId(article.tag_id);
+            return res.status(HttpStatusCodeEnum.OK).json({
+                article: {
+                    id: article.id,
+                    user: user?.username,
+                    title: article.title,
+                    tag: tag?.name,
+                    thumbnail: article.thumbnail,
+                    content: article.content,
+                    createdAt: article.created_at,
+                    updatedAt: article.updated_at,
+                },
+            });
         } catch (error) {
             return res
                 .status(HttpStatusCodeEnum.BAD_REQUEST)
@@ -137,13 +152,13 @@ export default class ArticleController {
         try {
             const { title, tag, content } = req.body;
             const thumbnail = req.file?.path || "";
-            console.log(`Title: ${title}`)
-            console.log(`Tag: ${tag}`)
-            console.log(`Thumbnail: ${thumbnail}`)
-            console.log(`Content: ${content}`)
+            console.log(`Title: ${title}`);
+            console.log(`Tag: ${tag}`);
+            console.log(`Thumbnail: ${thumbnail}`);
+            console.log(`Content: ${content}`);
             // get cookie
             const accessToken = req.cookies.accessToken;
-            console.log(`AcessToken: ${accessToken}`)
+            console.log(`AcessToken: ${accessToken}`);
             // verifty cookie
             if (!accessToken) {
                 return res

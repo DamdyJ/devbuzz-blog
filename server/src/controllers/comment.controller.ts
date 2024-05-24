@@ -46,6 +46,7 @@ export default class CommentController {
             const findArticle = await this.articleService.findArticleById(
                 articleId
             );
+            
             if (!findArticle) {
                 return res
                     .status(HttpStatusCodeEnum.NOT_FOUND)

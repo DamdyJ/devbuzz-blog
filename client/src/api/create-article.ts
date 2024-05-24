@@ -21,6 +21,7 @@ export default async function fetchCreateArticle(article: any) {
         } else {
             console.error("An unknown error occurred");
         }
-        throw new Error("Fail fetch sign up data");
+        throw new Error("Fail fetch article data");
     }
 }
+

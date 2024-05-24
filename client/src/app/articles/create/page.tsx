@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
-import fetchCreateArticle, { IArticle } from "@/api/articles";
+import fetchCreateArticle, { IArticle } from "@/api/create-article";
 import { FormEvent } from "react";
 import {
     ArticleSchema,
