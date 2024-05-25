@@ -63,12 +63,13 @@ export default class ArticleService {
     public async editArticle(
         id: string,
         title: string,
+        tagId: string,
         thumbnail: any,
         content: string
     ) {
         return await this.prisma.article.update({
             where: { id },
-            data: { title, thumbnail, content },
+            data: { title, tag_id: tagId, thumbnail, content },
         });
     }
 }

@@ -14,7 +14,7 @@ interface IArticle {
 export async function fetchGetArticle(id: string) {
     try {
         const response = await axios.get<IArticle>(
-            URL.GET_SINGLE_ARTICLE + `${id}`
+            URL.GET_SINGLE_ARTICLE + `/${id}`
         );
         const data = await response.data.article;
         return data;

@@ -1,9 +1,14 @@
 "use client";
+
 import { fetchGetArticle } from "@/api/get-single-article";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import Comment from "@/components/comment";
+import DynamicBreadcrumbs, {
+    BreadcrumbItemType,
+} from "@/components/dynamic-breadcrumb";
 export default function ArticlePage() {
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
@@ -14,20 +19,27 @@ export default function ArticlePage() {
         thumbnail: "",
         content: "",
     });
+
+    const breadcrumbItems: BreadcrumbItemType[] = [
+        { label: "Home", href: "/" },
+        { label: "Articles", href: "/articles" },
+    ];
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await fetchGetArticle(params.id);
-                const splitUrl = response.thumbnail.split("\\");
-                const imageUrl = splitUrl[splitUrl.length - 1]; 
+                const articleResponse = await fetchGetArticle(params.id);
+                const splitUrl = articleResponse.thumbnail.split("\\");
+                const imageUrl = splitUrl[splitUrl.length - 1];
                 setArticle({
-                    username: response.user,
-                    title: response.title,
-                    tag: response.tag,
+                    username: articleResponse.user,
+                    title: articleResponse.title,
+                    tag: articleResponse.tag,
                     thumbnail: imageUrl,
-                    content: response.content,
+                    content: articleResponse.content,
                 });
+
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching new access token:", error);
@@ -38,7 +50,6 @@ export default function ArticlePage() {
 
         fetchData();
     }, [params.id]);
-
     if (loading) {
         return (
             <div>
@@ -50,19 +61,27 @@ export default function ArticlePage() {
     return (
         <>
             <div className="w-full max-w-4xl mx-auto px-4">
-                <h1 className="font-bold text-3xl md:text-4xl">
+                <DynamicBreadcrumbs list={breadcrumbItems} />
+                <h1 className="font-bold text-2xl sm:text-4xl mb-3 sm:mb-4">
                     {article.title}
                 </h1>
-                <span className="md:text-lg">@{article.username}</span>
+                <div className="flex items-center gap-3">
+                    <span className="sm:text-lg font-semibold">
+                        {article.username}
+                    </span>
+                    <Badge>{article.tag}</Badge>
+                </div>
                 <Image
-                    className="w-full max-h-[486px]"
+                    className="w-full max-h-[486px] border border-black mb-4 mt-2 sm:mb-6 sm:mt-4"
                     src={`/thumbnail/${article.thumbnail}`}
                     alt="thumbnail"
                     width={864}
                     height={(864 / 16) * 9}
                 />
-                <Badge>{article.tag}</Badge>
-                <p>{article.content}</p>
+
+                <p className="text-base my-4">{article.content}</p>
+                <h2 className="font-semibold text-xl">Comments</h2>
+                <Comment />
             </div>
         </>
     );

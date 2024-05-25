@@ -6,6 +6,7 @@ import CommentService from "../services/comment.service";
 import { ErrorMessageEnum } from "../enums/errorMessage.enum";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import ArticleService from "../services/article.service";
+import UserService from "../services/user.service";
 
 @controller("/comment")
 export default class CommentController {
@@ -14,7 +15,9 @@ export default class CommentController {
         @inject(ArticleService)
         private readonly articleService: ArticleService,
         @inject(JsonWebTokenUtil)
-        private readonly jsonWebTokenUtil: JsonWebTokenUtil
+        private readonly jsonWebTokenUtil: JsonWebTokenUtil,
+        @inject(UserService)
+        private readonly userService: UserService
     ) {}
 
     @httpGet("/")
@@ -36,6 +39,35 @@ export default class CommentController {
         }
     }
 
+    @httpGet("/:id")
+    public async getCommentById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const comments = await this.commentService.findCommentByArticleId(
+                id
+            );
+            if (!comments.length) {
+                return res
+                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .json({ message: ErrorMessageEnum.NOT_FOUND });
+            }
+
+            for (const comment of comments) {
+                const user = await this.userService.findUserById(
+                    comment.user_id
+                );
+                comment.user_id = user?.username || "Unknown";
+            }
+
+            return res.status(HttpStatusCodeEnum.OK).json(comments);
+        } catch (error) {
+            return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
+                error,
+                message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
+            });
+        }
+    }
+
     @httpPost("/")
     public async createComment(req: Request, res: Response) {
         try {
@@ -46,7 +78,7 @@ export default class CommentController {
             const findArticle = await this.articleService.findArticleById(
                 articleId
             );
-            
+
             if (!findArticle) {
                 return res
                     .status(HttpStatusCodeEnum.NOT_FOUND)
@@ -78,12 +110,11 @@ export default class CommentController {
 
             return res.status(HttpStatusCodeEnum.CREATED).json(createComment);
         } catch (error) {
-            return res
-                .status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR)
-                .json({
-                    error,
-                    message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
-                });
+            console.log(error)
+            return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
+                error,
+                message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
+            });
         }
     }
 }

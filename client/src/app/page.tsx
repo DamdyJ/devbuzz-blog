@@ -1,5 +1,6 @@
-'use client'
-import useAuth from '@/hooks/useAuth';
+"use client";
+import PageTransition from "@/components/page-transition";
+import useAuth from "@/hooks/useAuth";
 
 export default function YourPage() {
     const { loading, authenticated } = useAuth();
@@ -13,12 +14,15 @@ export default function YourPage() {
     }
 
     if (!authenticated) {
-        return null; 
+        return null;
     }
 
     return (
-        <main>
-            <h1>Main</h1>
-        </main>
+        <>
+            <PageTransition />
+            <main>
+                <h1>Main</h1>
+            </main>
+        </>
     );
 }

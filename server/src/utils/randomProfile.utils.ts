@@ -6,5 +6,5 @@ function getRandomNumber() {
 
 export const defaultProfile = path.join(
     __dirname,
-    `../../../client/public/data/profile0${getRandomNumber()}.png`
+    `../../../client/public/profile0${getRandomNumber()}.png`
 );

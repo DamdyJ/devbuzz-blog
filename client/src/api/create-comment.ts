@@ -1,18 +1,24 @@
 import { URL } from "../constant";
 import axios from "axios";
 
-interface IComment {
-    id: string;
-    user_id: string;
-    articleId: string;
+export interface IComment {
     comment: string;
-    created_at: string;
 }
 
-export default async function fetchGetCommets(params: string) {
+export default async function fetchCreateCommet(
+    articleId: string,
+    comment: any
+) {
     try {
-        const response = await axios.get<IComment[]>(
-            URL.GET_COMMENT + `/${params}`
+        const response = await axios.post(
+            URL.POST_COMMENT,
+            {
+                articleId,
+                comment,
+            },
+            {
+                withCredentials: true,
+            }
         );
         const data = response.data;
         return data;

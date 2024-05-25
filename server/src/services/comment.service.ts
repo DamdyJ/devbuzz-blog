@@ -10,12 +10,21 @@ export default class CommentService {
             data: {
                 user_id: userId,
                 article_id: articleId,
-                comment,
+                comment: comment,
             },
         });
     }
 
     public async findAllComments() {
         return await this.prisma.comment.findMany();
+    }
+
+    public async findCommentById(id: string) {
+        return await this.prisma.comment.findUnique({ where: { id } });
+    }
+    public async findCommentByArticleId(articleId: string) {
+        return await this.prisma.comment.findMany({
+            where: { article_id: articleId }
+        });
     }
 }
