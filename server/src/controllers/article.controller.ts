@@ -27,7 +27,6 @@ export default class ArticleController {
         @inject(TagService) private readonly tagService: TagService,
         @inject(UserService) private readonly userService: UserService
     ) {}
-
     @httpGet("/")
     public async getAllArticles(req: Request, res: Response) {
         try {
@@ -36,26 +35,49 @@ export default class ArticleController {
             const limitNumber = parseInt(limit as string) || 10;
 
             const articles = await this.articleService.findAllArticles();
-            // Validasi page dan limit
+
+            // Validate page and limit
             if (pageNumber <= 0 || limitNumber <= 0) {
                 return res
                     .status(400)
                     .json({ message: "Invalid page or limit value" });
             }
 
-            // Mendapatkan sebagian artikel berdasarkan halaman dan batasan
+            // Get a portion of articles based on page and limit
             const startIndex = (pageNumber - 1) * limitNumber;
             const endIndex = pageNumber * limitNumber;
             const paginatedArticles = articles.slice(startIndex, endIndex);
 
+            const formattedArticles = await Promise.all(
+                paginatedArticles.map(async (article) => {
+                    const tag = await this.tagService.findTagbyId(
+                        article.tag_id
+                    );
+                    const username = await this.userService.findUserById(
+                        article.user_id
+                    );
+                    return {
+                        ...article,
+                        tag: tag?.name,
+                        username: username?.username,
+                    };
+                })
+            );
+
             return res.status(HttpStatusCodeEnum.OK).json({
                 total: articles.length,
-                articles: paginatedArticles,
+                articles: formattedArticles,
                 page: pageNumber,
                 limit: limitNumber,
             });
-        } catch (error) {}
+        } catch (error) {
+            return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
+                error,
+                message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
+            });
+        }
     }
+
     @httpGet("/v1/test")
     public async testGetArticles(
         @queryParam("page") page: number,
@@ -67,19 +89,17 @@ export default class ArticleController {
             const limitNumber = limit || 10;
 
             const articles = await this.articleService.findAllArticles();
-            // Validasi page dan limit
+
             if (pageNumber <= 0 || limitNumber <= 0) {
                 return res
                     .status(400)
                     .json({ message: "Invalid page or limit value" });
             }
 
-            // Mendapatkan sebagian artikel berdasarkan halaman dan batasan
             const startIndex = (pageNumber - 1) * limitNumber;
             const endIndex = pageNumber * limitNumber;
             const paginatedArticles = articles.slice(startIndex, endIndex);
 
-            // Set cache-control header to enable caching for 1 hour (3600 seconds)
             res.setHeader("Cache-Control", "public, max-age=3600");
 
             return res.status(HttpStatusCodeEnum.OK).json({
@@ -242,7 +262,7 @@ export default class ArticleController {
             if (!content) {
                 content = getArticle.content;
             }
-            console.log(`thumbnail1: ${thumbnail}`);
+
             if (!thumbnail) {
                 thumbnail = getArticle.thumbnail;
             }
