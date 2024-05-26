@@ -26,7 +26,7 @@ import fetchCreateArticle from "@/api/create-article";
 import {
     ArticleSchema,
     Tag,
-} from "@/utils/validations/create-article-validation";
+} from "@/utils/validations/article-validation";
 import { useRouter } from "next/navigation";
 import PageTransition from "@/components/page-transition";
 import Image from "next/image";
@@ -143,7 +143,7 @@ export default function CreateArticlePage() {
                                         }}
                                     />
                                     {preview && (
-                                        <div className="mt-2">
+                                        <div className="">
                                             <AspectRatio
                                                 ratio={16 / 9}
                                                 className="bg-muted"

@@ -202,15 +202,14 @@ export default class ArticleController {
     public async editArticle(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { title, tag, content } = req.body;
-            const thumbnail = req.file?.path;
+            let { title, tag, content } = req.body;
+            let thumbnail = req.file?.path;
 
-            // get cookie
             const refreshToken = req.cookies.refreshToken;
             // verifty cookie
             if (!refreshToken) {
                 return res
-                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .status(HttpStatusCodeEnum.UNAUTHORIZED)
                     .json({ message: "Token not found" });
             }
 
@@ -227,25 +226,32 @@ export default class ArticleController {
             }
             const getArticle = await this.articleService.findArticleById(id);
             if (!getArticle) {
-                return res
-                    .status(HttpStatusCodeEnum.NOT_FOUND)
-                    .json({ message: ErrorMessageEnum.NOT_FOUND });
+                return res.status(HttpStatusCodeEnum.NOT_FOUND).json({
+                    error: ErrorMessageEnum.NOT_FOUND,
+                    message: "article is missing",
+                });
+            }
+            if (!title) {
+                title = getArticle.title;
+            }
+            if (!tag) {
+                const tagId = getArticle.tag_id;
+                const getTag = await this.tagService.findTagbyId(tagId);
+                tag = getTag?.name;
+            }
+            if (!content) {
+                content = getArticle.content;
+            }
+            console.log(`thumbnail1: ${thumbnail}`);
+            if (!thumbnail) {
+                thumbnail = getArticle.thumbnail;
             }
             const tagId = await this.tagService.findTagbyName(tag);
             if (!tagId) {
-                return res
-                    .status(HttpStatusCodeEnum.NOT_FOUND)
-                    .json({ message: ErrorMessageEnum.NOT_FOUND });
-            }
-            if (!thumbnail) {
-                const article = await this.articleService.editArticle(
-                    id,
-                    title,
-                    tagId.id,
-                    getArticle.thumbnail,
-                    content
-                );
-                return res.status(HttpStatusCodeEnum.OK).json({ article });
+                return res.status(HttpStatusCodeEnum.NOT_FOUND).json({
+                    error: ErrorMessageEnum.NOT_FOUND,
+                    message: "Tag is missing",
+                });
             }
 
             const article = await this.articleService.editArticle(
@@ -255,8 +261,10 @@ export default class ArticleController {
                 thumbnail,
                 content
             );
+            console.log(article);
             return res.status(HttpStatusCodeEnum.OK).json({ article });
         } catch (error) {
+            console.log(error);
             return res
                 .status(HttpStatusCodeEnum.BAD_REQUEST)
                 .json({ error, message: ErrorMessageEnum.BAD_REQUEST });

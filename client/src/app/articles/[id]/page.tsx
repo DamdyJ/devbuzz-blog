@@ -9,6 +9,7 @@ import Comment from "@/components/comment";
 import DynamicBreadcrumbs, {
     BreadcrumbItemType,
 } from "@/components/dynamic-breadcrumb";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 export default function ArticlePage() {
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
@@ -71,14 +72,14 @@ export default function ArticlePage() {
                     </span>
                     <Badge>{article.tag}</Badge>
                 </div>
-                <Image
-                    className="w-full max-h-[486px] border border-black mb-4 mt-2 sm:mb-6 sm:mt-4"
-                    src={`/thumbnail/${article.thumbnail}`}
-                    alt="thumbnail"
-                    width={864}
-                    height={(864 / 16) * 9}
-                />
-
+                <AspectRatio ratio={16 / 9} className="bg-muted">
+                    <Image
+                        className="object-cover rounded-sm"
+                        src={`/thumbnail/${article.thumbnail}`}
+                        alt="thumbnail"
+                        fill
+                    />
+                </AspectRatio>
                 <p className="text-base my-4">{article.content}</p>
                 <h2 className="font-semibold text-xl">Comments</h2>
                 <Comment />
