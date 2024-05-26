@@ -4,7 +4,7 @@ import { URL } from "../constant";
 
 export async function fetchNewAccessToken() {
     try {
-        const response = await axios.get(URL.NEWACCESSTOKEN, {
+        const response = await axios.get(URL.NEW_ACCESS_TOKEN, {
             withCredentials: true,
         });
         const data = await response.data;
