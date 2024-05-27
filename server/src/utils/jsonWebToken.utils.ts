@@ -10,11 +10,15 @@ export default class JsonWebTokenUtil {
         return jwt.sign(payload, TOKEN.ACCESS_TOKEN_SECRET, { expiresIn });
     }
     public createRefreshToken(payload: object, expiresIn: string | number) {
-        return jwt.sign(payload, TOKEN.ACCESS_TOKEN_SECRET, { expiresIn });
+        return jwt.sign(payload, TOKEN.REFRESH_TOKEN_SECRET, { expiresIn });
     }
 
     public verifyToken(token: string) {
         return jwt.verify(token, TOKEN.ACCESS_TOKEN_SECRET);
+    }
+
+    public verifyRefreshToken(refreshToken: string){
+        return jwt.verify(refreshToken, TOKEN.REFRESH_TOKEN_SECRET) as { id: string };
     }
 
     public decodeToken(token: string) {

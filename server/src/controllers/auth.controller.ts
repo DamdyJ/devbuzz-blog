@@ -6,7 +6,6 @@ import { HttpStatusCodeEnum } from "../enums/httpStatusCode.enum";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import EncryptionUtil from "../utils/encryption.utils";
 import { ExpiresInEnum } from "../enums/expiresIn.enum";
-import { authenticeToken } from "../middlewares/auth.middleware";
 import { SuccessMessageEnum } from "../enums/successMessage.enum";
 import UserService from "../services/user.service";
 import SessionService from "../services/session.service";
@@ -14,7 +13,6 @@ import ProfileService from "../services/profile.service";
 import { defaultProfile } from "../utils/randomProfile.utils";
 import { PROFILE } from "../constants";
 import { inject } from "inversify";
-import { error } from "console";
 
 @controller("/auth")
 export default class AuthController {

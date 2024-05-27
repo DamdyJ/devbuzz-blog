@@ -14,11 +14,17 @@ interface IArticle {
 export async function fetchGetArticle(id: string) {
     try {
         const response = await axios.get<IArticle>(
-            URL.GET_SINGLE_ARTICLE + `/${id}`
+            URL.GET_SINGLE_ARTICLE + `/${id}`,
+            {
+                withCredentials: true,
+            }
         );
-        const data = await response.data.article;
+        const data = response.data.article;
         return data;
-    } catch (error) {
+    } catch (error: any) {
+        if(error.message.includes('401')){
+            throw new Error('Unauthorized user')
+        }
         if (error instanceof Error) {
             console.error(error.message);
         } else {

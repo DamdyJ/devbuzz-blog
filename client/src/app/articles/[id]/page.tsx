@@ -3,16 +3,20 @@
 import { fetchGetArticle } from "@/api/get-single-article";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import Comment from "@/components/comment";
 import DynamicBreadcrumbs, {
     BreadcrumbItemType,
 } from "@/components/dynamic-breadcrumb";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import PageTransition from "@/components/page-transition";
+import Loading from "@/components/loading";
 export default function ArticlePage() {
+    const router = useRouter();
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
+    const [unauthorized, setUnauthorized] = useState(false);
     const [article, setArticle] = useState({
         username: "",
         title: "",
@@ -40,10 +44,16 @@ export default function ArticlePage() {
                     thumbnail: imageUrl,
                     content: articleResponse.content,
                 });
-
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching new access token:", error);
+            } catch (error: any) {
+                setLoading(true);
+                console.error(
+                    "Error fetching new access token:",
+                    error.message
+                );
+                if (error.message.includes("Unauthorized")) {
+                    setUnauthorized(true);
+                    router.push("/signin");
+                }
             } finally {
                 setLoading(false);
             }
@@ -51,16 +61,18 @@ export default function ArticlePage() {
 
         fetchData();
     }, [params.id]);
+
     if (loading) {
-        return (
-            <div>
-                <h1>Loading...</h1>
-            </div>
-        );
+        return <Loading />;
+    }
+
+    if (unauthorized) {
+        return null;
     }
 
     return (
         <>
+            <PageTransition />
             <div className="w-full max-w-4xl mx-auto px-4">
                 <DynamicBreadcrumbs list={breadcrumbItems} />
                 <h1 className="font-bold text-2xl sm:text-4xl mb-3 sm:mb-4">
@@ -78,6 +90,8 @@ export default function ArticlePage() {
                         src={`/thumbnail/${article.thumbnail}`}
                         alt="thumbnail"
                         fill
+                        priority
+                        sizes="(max-width: 864px)"
                     />
                 </AspectRatio>
                 <p className="text-base my-4">{article.content}</p>

@@ -80,10 +80,12 @@ export default function ArticlesPage() {
                         >
                             <AspectRatio ratio={16 / 9} className="bg-muted">
                                 <Image
+                                    className="rounded-md object-cover"
                                     src={`/thumbnail/${topArticle.thumbnail}`}
                                     alt={topArticle.thumbnail}
                                     fill
-                                    className="rounded-md object-cover"
+                                    priority
+                                    sizes="(max-width: 488px)"
                                 />
                             </AspectRatio>
                             <div className="flex flex-col justify-between">

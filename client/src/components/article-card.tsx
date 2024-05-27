@@ -26,9 +26,11 @@ export default function ArticleCard({
             <AspectRatio ratio={16 / 9} className="bg-muted">
                 <Image
                     src={`/thumbnail/${thumbnail}`}
-                    alt="Photo by Drew Beamer"
-                    layout="fill"
+                    alt={thumbnail}
                     className="rounded-md object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 488px)"
                 />
             </AspectRatio>
             <h2 className="text-3xl font-bold">{title}</h2>

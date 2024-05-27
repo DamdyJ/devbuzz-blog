@@ -4,5 +4,6 @@ export enum ErrorMessageEnum {
     UNAUTHORIZED = "You are not allowed to access this resource!",
     NOT_FOUND = "Data is not found!",
     INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
-    WRONG_PASSWORD = "Wrong password"
+    WRONG_PASSWORD = "Wrong password",
+    FORBIDDEN = "Forbidden",
 }

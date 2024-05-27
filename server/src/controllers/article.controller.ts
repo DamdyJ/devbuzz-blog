@@ -16,6 +16,7 @@ import { inject } from "inversify";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import TagService from "../services/tag.service";
 import UserService from "../services/user.service";
+import AuthenticateToken from "../middlewares/auth.middleware";
 
 @controller("/article")
 export default class ArticleController {
@@ -36,14 +37,12 @@ export default class ArticleController {
 
             const articles = await this.articleService.findAllArticles();
 
-            // Validate page and limit
             if (pageNumber <= 0 || limitNumber <= 0) {
                 return res
                     .status(400)
                     .json({ message: "Invalid page or limit value" });
             }
 
-            // Get a portion of articles based on page and limit
             const startIndex = (pageNumber - 1) * limitNumber;
             const endIndex = pageNumber * limitNumber;
             const paginatedArticles = articles.slice(startIndex, endIndex);
@@ -135,7 +134,7 @@ export default class ArticleController {
         }
     }
 
-    @httpGet("/:id")
+    @httpGet("/:id", AuthenticateToken)
     public async getArticleById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -218,7 +217,7 @@ export default class ArticleController {
         }
     }
 
-    @httpPost("/:id", upload.single("thumbnail"))
+    @httpPost("/:id", AuthenticateToken, upload.single("thumbnail"))
     public async editArticle(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -244,6 +243,9 @@ export default class ArticleController {
                     .status(HttpStatusCodeEnum.NOT_FOUND)
                     .json({ veriftyToken, message: "Not valid Token" });
             }
+
+            const decoded = this.jsonWebTokenUtil.verifyRefreshToken(refreshToken)
+
             const getArticle = await this.articleService.findArticleById(id);
             if (!getArticle) {
                 return res.status(HttpStatusCodeEnum.NOT_FOUND).json({
@@ -251,6 +253,13 @@ export default class ArticleController {
                     message: "article is missing",
                 });
             }
+            if (getArticle.user_id !== decoded.id) {
+                return res.status(HttpStatusCodeEnum.FORBIDDEN).json({
+                    error: ErrorMessageEnum.FORBIDDEN,
+                    message: "You do not have permission to edit this article",
+                });
+            }
+
             if (!title) {
                 title = getArticle.title;
             }
@@ -281,7 +290,6 @@ export default class ArticleController {
                 thumbnail,
                 content
             );
-            console.log(article);
             return res.status(HttpStatusCodeEnum.OK).json({ article });
         } catch (error) {
             console.log(error);

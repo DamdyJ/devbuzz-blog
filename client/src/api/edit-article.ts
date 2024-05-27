@@ -14,10 +14,12 @@ export default async function fetchEditArticle(
             }
         );
         const data = response.data;
-        console.log(data)
         return data;
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
+        if(error.message.includes('401')){
+            throw new Error('Unauthorized user')
+        }
         if (error instanceof Error) {
             console.error(error.message);
         } else {
