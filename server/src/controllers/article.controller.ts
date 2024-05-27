@@ -18,6 +18,10 @@ import TagService from "../services/tag.service";
 import UserService from "../services/user.service";
 import AuthenticateToken from "../middlewares/auth.middleware";
 
+interface IRequest extends Request {
+    user?: { id: string };
+}
+
 @controller("/article")
 export default class ArticleController {
     constructor(
@@ -218,7 +222,7 @@ export default class ArticleController {
     }
 
     @httpPost("/:id", AuthenticateToken, upload.single("thumbnail"))
-    public async editArticle(req: Request, res: Response) {
+    public async editArticle(req: IRequest, res: Response) {
         try {
             const { id } = req.params;
             let { title, tag, content } = req.body;
@@ -240,11 +244,9 @@ export default class ArticleController {
 
             if (!veriftyToken) {
                 return res
-                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .status(HttpStatusCodeEnum.UNAUTHORIZED)
                     .json({ veriftyToken, message: "Not valid Token" });
             }
-
-            const decoded = this.jsonWebTokenUtil.verifyRefreshToken(refreshToken)
 
             const getArticle = await this.articleService.findArticleById(id);
             if (!getArticle) {
@@ -253,10 +255,11 @@ export default class ArticleController {
                     message: "article is missing",
                 });
             }
-            if (getArticle.user_id !== decoded.id) {
+
+            if (req.user?.id !== getArticle.user_id) {
                 return res.status(HttpStatusCodeEnum.FORBIDDEN).json({
                     error: ErrorMessageEnum.FORBIDDEN,
-                    message: "You do not have permission to edit this article",
+                    message: "You are not authorized to edit this article",
                 });
             }
 

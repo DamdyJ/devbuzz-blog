@@ -38,7 +38,6 @@ export default function EditArticlePage() {
                 setContent(articleResponse.content);
                 setLoading(false);
             } catch (error: any) {
-                console.error("Error fetching article:", error);
                 if (error.message.includes("Unauthorized")) {
                     setUnauthorized(true);
                     router.push("/signin");

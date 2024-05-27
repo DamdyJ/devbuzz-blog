@@ -20,6 +20,6 @@ export async function fetchGetAllArticles(
         } else {
             console.error("An unknown error occurred");
         }
-        throw new Error("Fail fetch article data");
+        throw new Error("Fail fetch articles data");
     }
 }

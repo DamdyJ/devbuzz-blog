@@ -82,11 +82,10 @@ export default function Editor({
                 title: "Post successful",
             });
             router.push(`/articles/${response.article.id}`);
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
             toast({
                 title: "Post failed",
-                description: "Please check your internet and try again.",
+                description: `${error.message}`,
             });
         }
     }

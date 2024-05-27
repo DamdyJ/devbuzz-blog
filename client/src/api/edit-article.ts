@@ -16,15 +16,17 @@ export default async function fetchEditArticle(
         const data = response.data;
         return data;
     } catch (error: any) {
-        console.log(error)
         if(error.message.includes('401')){
             throw new Error('Unauthorized user')
+        }
+        if(error.message.includes('403')){
+            throw new Error('Access Forbidden')
         }
         if (error instanceof Error) {
             console.error(error.message);
         } else {
             console.error("An unknown error occurred");
         }
-        throw new Error("Fail fetch comment data");
+        throw new Error("Fail fetch article data");
     }
 }

@@ -13,6 +13,6 @@ export async function fetchGetProfile(username: string) {
         } else {
             console.error("An unknown error occurred");
         }
-        throw new Error("Fail fetch article data");
+        throw new Error("Fail fetch profile data");
     }
 }

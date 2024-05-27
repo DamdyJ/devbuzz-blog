@@ -14,6 +14,6 @@ export default async function fetchGetUsername(userId: string) {
         } else {
             console.error("An unknown error occurred");
         }
-        throw new Error("Fail fetch article data");
+        throw new Error("Fail fetch username data");
     }
 }
