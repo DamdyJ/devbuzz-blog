@@ -80,8 +80,8 @@ export default function ArticlesPage() {
         created_at: string;
     }
     const topArticle: Article = articles[0];
-    const remainingArticles = articles.slice(1);
-
+    const remainingArticles = articles.length > 1 ? articles.slice(1) : [];
+    
     if (loading) {
         return <Loading />;
     }

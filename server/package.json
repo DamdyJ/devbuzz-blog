@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "nodemon",
+    "seed": "ts-node prisma/seed.ts",
     "build": "tsc",
     "start": "node ./dist/src/index.js"
   },
@@ -22,7 +23,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.11",
-    "@types/node": "^20.12.11",
+    "@types/node": "^20.12.12",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

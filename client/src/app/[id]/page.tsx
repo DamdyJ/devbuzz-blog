@@ -12,10 +12,10 @@ import DynamicBreadcrumbs, {
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import PageTransition from "@/components/page-transition";
 import Loading from "@/components/loading";
-import NavbarLogin from "@/components/navbar-login";
 import { Button } from "@/components/ui/button";
 import { fetchCurrentUser } from "@/api/check-user";
 import Link from "next/link";
+import Navbar from "@/components/navbar";
 
 export default function ArticlePage() {
     const router = useRouter();
@@ -84,7 +84,7 @@ export default function ArticlePage() {
     return (
         <>
             <PageTransition />
-            <NavbarLogin />
+            <Navbar />
             <div className="w-full max-w-4xl mx-auto p-4">
                 <div className="flex justify-between items-center">
                     <DynamicBreadcrumbs list={breadcrumbItems} />
