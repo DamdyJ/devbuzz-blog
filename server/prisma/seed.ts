@@ -143,6 +143,134 @@ async function main() {
                 ),
                 tag: "frontend",
             },
+            {
+                title: "Understanding HTML Basics",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (1).jpg"
+                ),
+                tag: "html",
+            },
+            {
+                title: "CSS for Beginners",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (2).jpg"
+                ),
+                tag: "css",
+            },
+            {
+                title: "JavaScript ES6 Features",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (3).jpg"
+                ),
+                tag: "javascript",
+            },
+            {
+                title: "Introduction to SQL",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (4).jpg"
+                ),
+                tag: "sql",
+            },
+            {
+                title: "NoSQL Databases Overview",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (5).jpg"
+                ),
+                tag: "nosql",
+            },
+            {
+                title: "Frontend Development Guide",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (6).jpg"
+                ),
+                tag: "frontend",
+            },
+            {
+                title: "Backend Development Tips",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (7).jpg"
+                ),
+                tag: "backend",
+            },
+            {
+                title: "Full-Stack Development",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (8).jpg"
+                ),
+                tag: "frontend",
+            },
+            {
+                title: "Understanding HTML Basics",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (1).jpg"
+                ),
+                tag: "html",
+            },
+            {
+                title: "CSS for Beginners",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (2).jpg"
+                ),
+                tag: "css",
+            },
+            {
+                title: "JavaScript ES6 Features",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (3).jpg"
+                ),
+                tag: "javascript",
+            },
+            {
+                title: "Introduction to SQL",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (4).jpg"
+                ),
+                tag: "sql",
+            },
+            {
+                title: "NoSQL Databases Overview",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (5).jpg"
+                ),
+                tag: "nosql",
+            },
+            {
+                title: "Frontend Development Guide",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (6).jpg"
+                ),
+                tag: "frontend",
+            },
+            {
+                title: "Backend Development Tips",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (7).jpg"
+                ),
+                tag: "backend",
+            },
+            {
+                title: "Full-Stack Development",
+                thumbnail: path.join(
+                    __dirname,
+                    "../../../client/public/thumbnail/image (8).jpg"
+                ),
+                tag: "frontend",
+            },
         ];
 
         for (const [index, articleData] of articles.entries()) {
