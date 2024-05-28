@@ -13,7 +13,7 @@ DevBuzz Blog is a full-stack blog website built with TypeScript, Express.js, Jso
   - [Comment](#comment)
   - [Post](#post)
 - [Contributors](#contributors)
-- [License](#license)
+
 ## Installation
 
 To run the project locally, follow these steps:
@@ -83,6 +83,3 @@ If you encounter any issues during installation or usage, please refer to the pr
 
 - [DamdyJ](https://github.com/DamdyJ)
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
