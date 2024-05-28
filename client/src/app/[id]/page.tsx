@@ -16,12 +16,14 @@ import { Button } from "@/components/ui/button";
 import { fetchCurrentUser } from "@/api/check-user";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
+import { fetchGetProfile } from "@/api/get-profile";
 
 export default function ArticlePage() {
     const router = useRouter();
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
     const [unauthorized, setUnauthorized] = useState(false);
+    const [profileImage, setProfileImage] = useState<string>();
     const [edit, setEdit] = useState(false);
     const [article, setArticle] = useState({
         username: "",
@@ -40,6 +42,7 @@ export default function ArticlePage() {
             setLoading(true);
             try {
                 const articleResponse = await fetchGetArticle(params.id);
+                console.log(articleResponse)
                 const articleData = await articleResponse.article;
                 const user = articleResponse.user;
                 const splitUrl = articleData.thumbnail.split("\\");
@@ -55,10 +58,14 @@ export default function ArticlePage() {
                     thumbnail: imageUrl,
                     content: articleData.content,
                 });
+                const profileResponse = await fetchGetProfile(articleData.user);
+                const splitProfileImageURL = profileResponse.profile.profile_image.split("\\");
+                const profileImageURL = splitProfileImageURL[splitProfileImageURL.length - 1];
+                setProfileImage(profileImageURL);
             } catch (error: any) {
                 setLoading(true);
                 console.error(
-                    "Error fetching new access token:",
+                    "Error fetching profile data:",
                     error.message
                 );
                 if (error.message.includes("Unauthorized")) {
@@ -71,7 +78,7 @@ export default function ArticlePage() {
         };
 
         fetchData();
-    }, [params.id]);
+    }, [params.id, profileImage]);
 
     if (loading) {
         return <Loading />;
@@ -117,7 +124,7 @@ export default function ArticlePage() {
                 </AspectRatio>
                 <p className="text-base my-4">{article.content}</p>
                 <h2 className="font-semibold text-xl">Comments</h2>
-                <Comment />
+                <Comment profileImage={profileImage} />
             </div>
         </>
     );

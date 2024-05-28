@@ -28,12 +28,10 @@ interface Comment {
     comment: string;
     profileImage?: string;
 }
-
-export default function CommentPage() {
+export default function Comment({ profileImage }: { profileImage?: string }) {
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
     const [comments, setComments] = useState<Comment[]>([]);
-    const [profileImage, setProfileImage] = useState<string>();
     const form = useForm<z.infer<typeof CommentSchema>>({
         resolver: zodResolver(CommentSchema),
         defaultValues: {
@@ -60,11 +58,10 @@ export default function CommentPage() {
             );
             const splitUrl = profileResponse.profile.profile_image.split("\\");
             const imageUrl = splitUrl[splitUrl.length - 1];
-            setProfileImage(imageUrl);
 
             setComments([
                 ...comments,
-                { username: username.username, comment: data.comment },
+                { username: username.username, comment: data.comment, profileImage: imageUrl },
             ]);
         } catch (error) {
             toast({
@@ -86,7 +83,6 @@ export default function CommentPage() {
                 const splitUrl =
                     profileResponse.profile.profile_image.split("\\");
                 const imageUrl = splitUrl[splitUrl.length - 1];
-                setProfileImage(imageUrl);
 
                 const formattedComments = commentResponse
                     .map((comment) => {
@@ -133,10 +129,7 @@ export default function CommentPage() {
                             <FormItem>
                                 <div className="flex gap-3 pt-2 pb-4 sm:pt-3 sm:pb-5">
                                     <Avatar>
-                                        <AvatarImage
-                                            src={`/${profileImage}`}
-                                            alt="@shadcn"
-                                        />
+                                        <AvatarImage src={`/${profileImage}`} />
                                         <AvatarFallback>profile</AvatarFallback>
                                     </Avatar>
                                     <div className="w-full grid gap-2 sm:w-2/3 sm:gap-4">
