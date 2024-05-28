@@ -8,15 +8,18 @@ To run the project locally, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/DamdyJ/devbuzz-blog.git`
 2. Navigate to the project directory: `cd devbuzz-blog`
-3. You need 2 terminals to run the project, one for the client and the other for the server.
-4. Navigate to the client directory: `cd client`
-5. Install dependencies: `npm install`
-6. Start the development server: `npm run dev`
-7. Use a different terminal to run the server.
-8. Navigate to the server directory: `cd server`
-9. Install dependencies: `npm install`
-10. Start the development server: `npm run dev`
-11. Install XAMPP and run Apache & MySQL.
+3. Install XAMPP and run Apache & MySQL.
+4. You need 2 terminals to run the project, one for the client and the other for the server.
+5. Navigate to the client directory: `cd client`
+6. Install dependencies: `npm install`
+7. Start the development server: `npm run dev`
+8. Use a different terminal to run the server.
+9. Navigate to the server directory: `cd server`
+10. Install dependencies: `npm install`
+11. Then you need to create the database using Prisma: `npx prisma migrate dev`
+12. Name the migration whatever you like, for example, 'init'.
+13. Start the development server: `npm run dev`
+14. Go to your browser and type the URL `http://localhost:3000`
 
 ## Usage
 
