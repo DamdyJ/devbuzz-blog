@@ -3,11 +3,12 @@ import { URL } from "../constant";
 
 export async function fetchGetAllArticles(
     limit: number | 10,
-    page: number | 1
+    page: number | 1,
+    q: string | ""
 ) {
     try {
         const response = await axios.get(
-            URL.GET_ALL_ARTICLES + `?limit=${limit}&page=${page}`,
+            URL.GET_ALL_ARTICLES + `?limit=${limit}&page=${page}&q=${q}`,
             {
                 withCredentials: true,
             }

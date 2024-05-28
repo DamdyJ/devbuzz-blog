@@ -20,16 +20,14 @@ import { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
 import fetchCreateComment from "@/api/create-comment";
 import fetchGetUsername from "@/api/get-username";
-
+interface Comment {
+    username: string;
+    comment: string;
+}
 export default function CommentPage() {
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
-    const [comments, setComments] = useState([
-        {
-            username: "",
-            comment: "",
-        },
-    ]);
+    const [comments, setComments] = useState<Comment[]>([]);
 
     const form = useForm<z.infer<typeof CommentSchema>>({
         resolver: zodResolver(CommentSchema),
@@ -125,25 +123,30 @@ export default function CommentPage() {
                     />
                 </form>
             </FormProvider>
-
-            <div className="grid gap-4 w-full md:w-2/3 lg:w-1/2">
-                {comments.map((comment, index) => (
-                    <div key={index} className="flex gap-3 items-start">
-                        <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" />
-                            <AvatarFallback>{comment.username}</AvatarFallback>
-                        </Avatar>
-                        <div className="grid gap-1">
-                            <span className="text-sm font-semibold">
-                                @{comment.username}
-                            </span>
-                            <div role="text" dir="auto">
-                                {comment.comment}
+            {comments.length > 0 ? (
+                <div className="grid gap-4 w-full md:w-2/3 lg:w-1/2">
+                    {comments.map((comment, index) => (
+                        <div key={index} className="flex gap-3 items-start">
+                            <Avatar>
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback>
+                                    {comment.username}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="grid gap-1">
+                                <span className="text-sm font-semibold">
+                                    @{comment.username}
+                                </span>
+                                <div role="text" dir="auto">
+                                    {comment.comment}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                ""
+            )}
         </>
     );
 }

@@ -67,7 +67,7 @@ export default function CreateArticlePage() {
             toast({
                 title: "Post successful",
             });
-            router.push(`/articles/${response.article.id}`);
+            router.push(`/${response.article.id}`);
         } catch (error) {
             console.log(error);
             toast({
@@ -93,8 +93,8 @@ export default function CreateArticlePage() {
     return (
         <>
             <PageTransition />
-            <div className="w-full min-h-screen flex gap-4 flex-col items-center justify-center">
-                <h1 className="text-3xl font-bold md:text-4xl text-left lg:w-1/2">
+            <div className="w-full min-h-screen flex gap-4 flex-col items-center justify-center p-4">
+                <h1 className="w-full text-3xl font-bold sm:w-2/3 sm:text-4xl lg:w-1/2">
                     Create
                 </h1>
                 <Form {...form}>
@@ -102,7 +102,7 @@ export default function CreateArticlePage() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         method="POST"
                         encType="multipart/form-data"
-                        className="w-3/4 space-y-4 md:w-2/3 md:space-y-6 lg:w-1/2"
+                        className="w-full space-y-4 sm:w-2/3 md:space-y-6 lg:w-1/2"
                     >
                         <FormField
                             control={form.control}

@@ -12,8 +12,10 @@ import PageTransition from "@/components/page-transition";
 import Editor from "@/components/editor";
 import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
+import useAuth from "@/hooks/useAuth";
 
 export default function EditArticlePage() {
+    const { authenticated } = useAuth();
     const router = useRouter();
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
@@ -22,7 +24,6 @@ export default function EditArticlePage() {
     const [tag, setTag] = useState("");
     const [thumbnail, setThumbnail] = useState("");
     const [content, setContent] = useState("");
-    const [unauthorized, setUnauthorized] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,7 +40,6 @@ export default function EditArticlePage() {
                 setLoading(false);
             } catch (error: any) {
                 if (error.message.includes("Unauthorized")) {
-                    setUnauthorized(true);
                     router.push("/signin");
                 }
             } finally {
@@ -53,12 +53,11 @@ export default function EditArticlePage() {
     if (loading) {
         return <Loading />;
     }
-    if (unauthorized) {
+    if (!authenticated) {
         return null;
     }
     const breadcrumbItems: BreadcrumbItemType[] = [
         { label: "Home", href: "/" },
-        { label: "Articles", href: "/articles" },
     ];
 
     return (

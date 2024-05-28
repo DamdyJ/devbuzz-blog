@@ -5,13 +5,50 @@ import { ErrorMessageEnum } from "../enums/errorMessage.enum";
 import { HttpStatusCodeEnum } from "../enums/httpStatusCode.enum";
 import UserService from "../services/user.service";
 import { upload } from "../middlewares/multer.middleware";
+import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 
 @controller("/profile")
 export default class ProfileController {
     constructor(
         private readonly profileService: ProfileService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly jsonWebTokenUtil: JsonWebTokenUtil
     ) {}
+
+    @httpGet("/profile-image")
+    public async getProfileImage(req: Request, res: Response) {
+        try {
+            const refreshToken = req.cookies.refreshToken;
+            if (!refreshToken) {
+                return res.status(HttpStatusCodeEnum.UNAUTHORIZED).json({
+                    error: ErrorMessageEnum.UNAUTHORIZED,
+                    message: "Uanutorized user",
+                });
+            }
+            const decode =
+                this.jsonWebTokenUtil.decodeTokenAndGetId(refreshToken);
+            const profile = await this.profileService.findProfileById(
+                decode.id
+            );
+            if (!profile) {
+                return res.status(HttpStatusCodeEnum.NOT_FOUND).json({
+                    error: ErrorMessageEnum.NOT_FOUND,
+                    message: "Profile is not found",
+                });
+            }
+            const user = await this.userService.findUserById(profile?.user_id);
+            return res
+                .status(HttpStatusCodeEnum.OK)
+                .json({
+                    profileImage: profile.profile_image,
+                    username: user?.username,
+                });
+        } catch (error) {
+            return res
+                .status(HttpStatusCodeEnum.BAD_REQUEST)
+                .json({ error, message: ErrorMessageEnum.BAD_REQUEST });
+        }
+    }
 
     @httpGet("/:username")
     public async getProfile(req: Request, res: Response) {

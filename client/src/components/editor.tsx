@@ -81,7 +81,7 @@ export default function Editor({
             toast({
                 title: "Post successful",
             });
-            router.push(`/articles/${response.article.id}`);
+            router.push(`/${response.article.id}`);
         } catch (error: any) {
             toast({
                 title: "Post failed",
@@ -211,7 +211,7 @@ export default function Editor({
                     <div className="flex gap-4">
                         <Link
                             className="w-full"
-                            href={`/articles/${params.id}`}
+                            href={`/${params.id}`}
                             passHref
                         >
                             <Button className="w-full" variant="outline">

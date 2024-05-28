@@ -17,13 +17,19 @@ export default class JsonWebTokenUtil {
         return jwt.verify(token, TOKEN.ACCESS_TOKEN_SECRET);
     }
 
-    public verifyRefreshToken(refreshToken: string){
-        return jwt.verify(refreshToken, TOKEN.REFRESH_TOKEN_SECRET) as { id: string };
+    public verifyRefreshToken(refreshToken: string) {
+        return jwt.verify(refreshToken, TOKEN.REFRESH_TOKEN_SECRET) as {
+            id: string;
+        };
+    }
+
+    public decodeTokenAndGetId(token: string) {
+        return jwt.decode(token) as { id: string };
     }
 
     public decodeToken(token: string) {
         const decoded = jwt.decode(token);
-        
+
         if (typeof decoded === "object" && decoded && "id" in decoded) {
             return (decoded as JwtPayload).id;
         } else {

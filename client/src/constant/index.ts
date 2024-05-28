@@ -11,4 +11,5 @@ export const URL = {
     POST_COMMENT: "http://localhost:5000/comment",
     GET_USERNAME: "http://localhost:5000/user",
     GET_PROFILE: "http://localhost:5000/profile",
+    GET_PROFILE_IMAGE: "http://localhost:5000/profile/profile-image"
 };

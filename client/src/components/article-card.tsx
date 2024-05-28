@@ -22,7 +22,7 @@ export default function ArticleCard({
     createdAt,
 }: ArticleCardProps): JSX.Element {
     return (
-        <Link className="mb-4" href={`/articles/${id}`}>
+        <Link className="mb-4" href={`/${id}`}>
             <AspectRatio ratio={16 / 9} className="bg-muted">
                 <Image
                     src={`/thumbnail/${thumbnail}`}

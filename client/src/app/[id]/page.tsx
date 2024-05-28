@@ -12,6 +12,8 @@ import DynamicBreadcrumbs, {
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import PageTransition from "@/components/page-transition";
 import Loading from "@/components/loading";
+import NavbarLogin from "@/components/navbar-login";
+
 export default function ArticlePage() {
     const router = useRouter();
     const params = useParams<{ id: string }>();
@@ -27,7 +29,6 @@ export default function ArticlePage() {
 
     const breadcrumbItems: BreadcrumbItemType[] = [
         { label: "Home", href: "/" },
-        { label: "Articles", href: "/articles" },
     ];
 
     useEffect(() => {
@@ -73,7 +74,8 @@ export default function ArticlePage() {
     return (
         <>
             <PageTransition />
-            <div className="w-full max-w-4xl mx-auto px-4">
+            <NavbarLogin />
+            <div className="w-full max-w-4xl mx-auto p-4">
                 <DynamicBreadcrumbs list={breadcrumbItems} />
                 <h1 className="font-bold text-2xl sm:text-4xl mb-3 sm:mb-4">
                     {article.title}

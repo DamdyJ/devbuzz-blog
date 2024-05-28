@@ -4,8 +4,6 @@ import {
     httpDelete,
     httpGet,
     httpPost,
-    queryParam,
-    response,
 } from "inversify-express-utils";
 import { HttpStatusCodeEnum } from "../enums/httpStatusCode.enum";
 import { ErrorMessageEnum } from "../enums/errorMessage.enum";
@@ -32,14 +30,16 @@ export default class ArticleController {
         @inject(TagService) private readonly tagService: TagService,
         @inject(UserService) private readonly userService: UserService
     ) {}
+
     @httpGet("/")
     public async getAllArticles(req: Request, res: Response) {
         try {
-            const { page, limit } = req.query;
+            const { page, limit, q } = req.query;
             const pageNumber = parseInt(page as string) || 1;
             const limitNumber = parseInt(limit as string) || 10;
+            const searchTerm = (q as string) || "";
 
-            const articles = await this.articleService.findAllArticles();
+            let articles = await this.articleService.findAllArticles();
 
             if (pageNumber <= 0 || limitNumber <= 0) {
                 return res
@@ -47,12 +47,36 @@ export default class ArticleController {
                     .json({ message: "Invalid page or limit value" });
             }
 
+            const tagId = await this.tagService.findTagbyName(searchTerm);
+
+            if (searchTerm.trim() !== "") {
+                articles = articles.filter(
+                    (article) =>
+                        article.title
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase()) ||
+                        article.tag_id == tagId?.id
+                );
+            }
+
+            if (articles.length === 0) {
+                return res
+                    .status(HttpStatusCodeEnum.NOT_FOUND)
+                    .json({ message: "No articles found" });
+            }
+
+            articles = articles.sort(
+                (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime()
+            );
+
             const startIndex = (pageNumber - 1) * limitNumber;
             const endIndex = pageNumber * limitNumber;
             const paginatedArticles = articles.slice(startIndex, endIndex);
 
             const formattedArticles = await Promise.all(
-                paginatedArticles.map(async (article) => {
+                paginatedArticles.map(async (article: any) => {
                     const tag = await this.tagService.findTagbyId(
                         article.tag_id
                     );
@@ -78,63 +102,6 @@ export default class ArticleController {
                 error,
                 message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
             });
-        }
-    }
-
-    @httpGet("/v1/test")
-    public async testGetArticles(
-        @queryParam("page") page: number,
-        @queryParam("limit") limit: number,
-        @response() res: Response
-    ) {
-        try {
-            const pageNumber = page || 1;
-            const limitNumber = limit || 10;
-
-            const articles = await this.articleService.findAllArticles();
-
-            if (pageNumber <= 0 || limitNumber <= 0) {
-                return res
-                    .status(400)
-                    .json({ message: "Invalid page or limit value" });
-            }
-
-            const startIndex = (pageNumber - 1) * limitNumber;
-            const endIndex = pageNumber * limitNumber;
-            const paginatedArticles = articles.slice(startIndex, endIndex);
-
-            res.setHeader("Cache-Control", "public, max-age=3600");
-
-            return res.status(HttpStatusCodeEnum.OK).json({
-                total: articles.length,
-                articles: paginatedArticles,
-                page: pageNumber,
-                limit: limitNumber,
-            });
-        } catch (error) {
-            return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
-                error,
-                message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,
-            });
-        }
-    }
-
-    @httpGet("/test/")
-    public async getArticleByTitle(
-        @queryParam("search") search: string,
-        req: Request,
-        res: Response
-    ) {
-        try {
-            const article = await this.articleService.findArticleByTitle(
-                search
-            );
-            console.log(article);
-            return res.status(HttpStatusCodeEnum.OK).json(article);
-        } catch (error) {
-            return res
-                .status(HttpStatusCodeEnum.BAD_REQUEST)
-                .json({ error, message: ErrorMessageEnum.BAD_REQUEST });
         }
     }
 
