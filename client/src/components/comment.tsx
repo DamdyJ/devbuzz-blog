@@ -53,6 +53,15 @@ export default function CommentPage() {
             toast({
                 title: "Comment successful",
             });
+
+            const currentUserResponse = await fetchCurrentUser();
+            const profileResponse = await fetchGetProfile(
+                currentUserResponse.user.username
+            );
+            const splitUrl = profileResponse.profile.profile_image.split("\\");
+            const imageUrl = splitUrl[splitUrl.length - 1];
+            setProfileImage(imageUrl);
+
             setComments([
                 ...comments,
                 { username: username.username, comment: data.comment },
@@ -70,7 +79,6 @@ export default function CommentPage() {
             setLoading(true);
             try {
                 const commentResponse = await fetchGetComments(params.id);
-                console.log(commentResponse)
                 const currentUserResponse = await fetchCurrentUser();
                 const profileResponse = await fetchGetProfile(
                     currentUserResponse.user.username
@@ -83,7 +91,9 @@ export default function CommentPage() {
                 const formattedComments = commentResponse
                     .map((comment) => {
                         const splitUrl = comment.profileImage?.split("\\");
-                        const imageUrl = splitUrl ? splitUrl[splitUrl.length - 1] : undefined;
+                        const imageUrl = splitUrl
+                            ? splitUrl[splitUrl.length - 1]
+                            : undefined;
                         return {
                             id: comment.id,
                             username: comment.user_id,
@@ -92,7 +102,9 @@ export default function CommentPage() {
                             profileImage: imageUrl,
                         };
                     })
-                    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+                    .sort(
+                        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                    );
 
                 setComments(formattedComments);
                 setLoading(false);
@@ -104,7 +116,7 @@ export default function CommentPage() {
         };
 
         fetchData();
-    }, [params.id]);
+    }, [params.id, comments]);
 
     return (
         <>

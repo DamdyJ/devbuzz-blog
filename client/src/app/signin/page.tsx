@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import fetchSignIn, { ISignIn } from "../../api/signin";
 import PageTransition from "@/components/page-transition";
+import Link from "next/link";
 
 export default function SignInPage() {
     const router = useRouter();
@@ -91,6 +92,12 @@ export default function SignInPage() {
                         </Button>
                     </form>
                 </Form>
+                <div className="flex items-center">
+                    <p>Don&apos;t have account?</p>
+                    <Link href={"/signup"}>
+                        <Button variant="link">Create one</Button>
+                    </Link>
+                </div>
             </div>
         </>
     );

@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import fetchSignUp, { ISignUp } from "../../api/signup";
 import PageTransition from "@/components/page-transition";
+import Link from "next/link";
 
 export default function SignUpPage() {
     const router = useRouter();
@@ -41,7 +42,8 @@ export default function SignUpPage() {
         } catch (error) {
             toast({
                 title: "Sign up failed",
-                description: "Please check your credentials and try again.",
+                description:
+                    "There is coflict occure change your username or email and try again.",
             });
         }
     }
@@ -107,6 +109,12 @@ export default function SignUpPage() {
                         </Button>
                     </form>
                 </Form>
+                <div className="flex items-center">
+                    <p>Already have an account?</p>
+                    <Link href={"/signin"}>
+                        <Button variant="link">Sign In</Button>
+                    </Link>
+                </div>
             </div>
         </>
     );
