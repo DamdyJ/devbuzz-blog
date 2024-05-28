@@ -8,6 +8,9 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { fetchGetProfile } from "@/api/get-profile";
 import formatDate from "@/utils/date-formatter";
+import { toast } from "@/components/ui/use-toast";
+import Loading from "@/components/loading";
+import PageTransition from "@/components/page-transition";
 export default function ProfilePage() {
     const params = useParams<{ username: string }>();
     const [loading, setLoading] = useState(true);
@@ -45,19 +48,36 @@ export default function ProfilePage() {
         fetchData();
     }, [params.username]);
 
+    const handleShareClick = () => {
+        const url = window.location.href;
+        navigator.clipboard
+            .writeText(url)
+            .then(() => {
+                toast({
+                    title: "URL copied to clipboard!",
+                });
+            })
+            .catch((err) => {
+                toast({
+                    title: "Failed to copy user profile URL",
+                });
+            });
+    };
+
     if (loading) {
         return (
             <div>
-                <h1>Loading...</h1>
+                <Loading />
             </div>
         );
     }
 
     return (
         <>
+            <PageTransition />
             <div className=" w-full max-w-3xl min-h-screen justify-center mx-auto flex flex-col gap-1 p-4 items-center">
                 <div className="relative w-full">
-                    <Link href="/articles">
+                    <Link href="/">
                         <Button
                             className="absolute left-0 top-0"
                             variant="outline"
@@ -90,15 +110,19 @@ export default function ProfilePage() {
                         <p className="">{profile.joinSince}</p>
                     </div>
                     <div className="flex gap-4">
-                        <Button className="w-full" variant="outline">
+                        <Button
+                            onClick={handleShareClick}
+                            className="w-full"
+                            variant="outline"
+                        >
                             Share
                         </Button>
-                        <Link
+                        {/* <Link
                             className="w-full"
                             href={`/profile/${params.username}/edit`}
                         >
                             <Button className="w-full">Edit</Button>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
             </div>

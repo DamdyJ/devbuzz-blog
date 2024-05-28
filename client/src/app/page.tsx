@@ -32,7 +32,6 @@ export default function ArticlesPage() {
             setLoadingExceeded(true);
         }, 3000);
         const fetchData = async () => {
-            setLoading(true);
             try {
                 const response = await fetchGetAllArticles(
                     10,

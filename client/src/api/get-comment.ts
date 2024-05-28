@@ -7,6 +7,7 @@ interface IComment {
     articleId: string;
     comment: string;
     created_at: string;
+    profileImage: string;
 }
 
 export default async function fetchGetCommets(params: string) {

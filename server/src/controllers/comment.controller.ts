@@ -7,17 +7,16 @@ import { ErrorMessageEnum } from "../enums/errorMessage.enum";
 import JsonWebTokenUtil from "../utils/jsonWebToken.utils";
 import ArticleService from "../services/article.service";
 import UserService from "../services/user.service";
+import ProfileService from "../services/profile.service";
 
 @controller("/comment")
 export default class CommentController {
     constructor(
-        @inject(CommentService) private readonly commentService: CommentService,
-        @inject(ArticleService)
+        private readonly commentService: CommentService,
         private readonly articleService: ArticleService,
-        @inject(JsonWebTokenUtil)
         private readonly jsonWebTokenUtil: JsonWebTokenUtil,
-        @inject(UserService)
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly profileService: ProfileService
     ) {}
 
     @httpGet("/")
@@ -30,7 +29,8 @@ export default class CommentController {
                     message: "Comment is empty",
                 });
             }
-            return res.status(200).json(comments);
+
+            return res.status(HttpStatusCodeEnum.OK).json(comments);
         } catch (error) {
             return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
                 error,
@@ -52,14 +52,27 @@ export default class CommentController {
                     .json({ message: ErrorMessageEnum.NOT_FOUND });
             }
 
-            for (const comment of comments) {
-                const user = await this.userService.findUserById(
-                    comment.user_id
-                );
-                comment.user_id = user?.username || "Unknown";
-            }
+            const commentsWithProfileImages = await Promise.all(
+                comments.map(async (comment) => {
+                    const user = await this.userService.findUserById(
+                        comment.user_id
+                    );
+                    const profile = await this.profileService.findProfileById(
+                        comment.user_id
+                    );
+                    return {
+                        id: comment.id,
+                        user_id: user?.username || "Unknown",
+                        comment: comment.comment,
+                        created_at: comment.created_at,
+                        profileImage: profile?.profile_image,
+                    };
+                })
+            );
 
-            return res.status(HttpStatusCodeEnum.OK).json(comments);
+            return res
+                .status(HttpStatusCodeEnum.OK)
+                .json(commentsWithProfileImages);
         } catch (error) {
             return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
                 error,
@@ -110,7 +123,7 @@ export default class CommentController {
 
             return res.status(HttpStatusCodeEnum.CREATED).json(createComment);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             return res.status(HttpStatusCodeEnum.INTERNAL_SERVER_ERROR).json({
                 error,
                 message: ErrorMessageEnum.INTERNAL_SERVER_ERROR,

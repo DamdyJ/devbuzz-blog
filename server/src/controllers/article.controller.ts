@@ -129,6 +129,9 @@ export default class ArticleController {
                     createdAt: article.created_at,
                     updatedAt: article.updated_at,
                 },
+                user: {
+                    id: user?.id,
+                },
             });
         } catch (error) {
             return res

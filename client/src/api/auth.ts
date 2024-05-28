@@ -1,4 +1,3 @@
-// utils/auth.ts
 import axios from "axios";
 import { URL } from "../constant";
 

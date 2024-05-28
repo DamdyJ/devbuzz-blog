@@ -191,28 +191,21 @@ export default class AuthController {
     @httpGet("/check")
     public async checkCurrentUser(req: Request, res: Response) {
         try {
+            const accessToken = req.cookies.accessToken;
             const refreshToken = req.cookies.refreshToken;
-
-            const verifyToken = await this.authService.verifyToken(
-                refreshToken
-            );
-
-            if (!verifyToken) {
+            console.log(refreshToken);
+            if (!refreshToken && !accessToken) {
                 return res
-                    .status(HttpStatusCodeEnum.UNAUTHORIZED)
-                    .json({ message: "Refresh Token is not valid or expired" });
+                    .status(HttpStatusCodeEnum.FORBIDDEN)
+                    .json({ message: ErrorMessageEnum.FORBIDDEN });
             }
+            const decode =
+                this.jsonWebTokenUtil.decodeTokenAndGetId(refreshToken);
+            const user = await this.userService.findUserById(decode.id);
 
-            const session = await this.sessionService.findSessionByRefreshToken(
-                refreshToken
-            );
-
-            if (!session) {
-                return res
-                    .status(HttpStatusCodeEnum.UNAUTHORIZED)
-                    .json({ message: "Session is over, please login" });
-            }
-            return res.status(HttpStatusCodeEnum.OK).json(session.user_id);
+            return res
+                .status(HttpStatusCodeEnum.OK)
+                .json({ id: decode.id, user: { username: user?.username } });
         } catch (error) {
             return res
                 .status(HttpStatusCodeEnum.UNAUTHORIZED)

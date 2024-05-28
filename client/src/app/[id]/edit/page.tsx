@@ -30,13 +30,14 @@ export default function EditArticlePage() {
             setLoading(true);
             try {
                 const articleResponse = await fetchGetArticle(params.id);
-                const splitUrl = articleResponse.thumbnail.split("\\");
+                const articleData = await articleResponse.article;
+                const splitUrl = articleData.thumbnail.split("\\");
                 const imageUrl = splitUrl[splitUrl.length - 1];
-                setUsername(articleResponse.user);
-                setTitle(articleResponse.title);
-                setTag(articleResponse.tag);
+                setUsername(articleData.user);
+                setTitle(articleData.title);
+                setTag(articleData.tag);
                 setThumbnail(imageUrl);
-                setContent(articleResponse.content);
+                setContent(articleData.content);
                 setLoading(false);
             } catch (error: any) {
                 if (error.message.includes("Unauthorized")) {

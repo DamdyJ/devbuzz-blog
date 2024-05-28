@@ -9,6 +9,9 @@ interface IArticle {
         thumbnail: string;
         content: string;
     };
+    user: {
+        id: string;
+    };
 }
 
 export async function fetchGetArticle(id: string) {
@@ -19,7 +22,7 @@ export async function fetchGetArticle(id: string) {
                 withCredentials: true,
             }
         );
-        const data = response.data.article;
+        const data = response.data;
         return data;
     } catch (error: any) {
         if(error.message.includes('401')){

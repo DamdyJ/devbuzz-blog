@@ -13,12 +13,16 @@ import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import PageTransition from "@/components/page-transition";
 import Loading from "@/components/loading";
 import NavbarLogin from "@/components/navbar-login";
+import { Button } from "@/components/ui/button";
+import { fetchCurrentUser } from "@/api/check-user";
+import Link from "next/link";
 
 export default function ArticlePage() {
     const router = useRouter();
     const params = useParams<{ id: string }>();
     const [loading, setLoading] = useState(true);
     const [unauthorized, setUnauthorized] = useState(false);
+    const [edit, setEdit] = useState(false);
     const [article, setArticle] = useState({
         username: "",
         title: "",
@@ -36,14 +40,20 @@ export default function ArticlePage() {
             setLoading(true);
             try {
                 const articleResponse = await fetchGetArticle(params.id);
-                const splitUrl = articleResponse.thumbnail.split("\\");
+                const articleData = await articleResponse.article;
+                const user = articleResponse.user;
+                const splitUrl = articleData.thumbnail.split("\\");
                 const imageUrl = splitUrl[splitUrl.length - 1];
+                const currentUserResponse = await fetchCurrentUser();
+                if (currentUserResponse.id === user.id) {
+                    setEdit(true);
+                }
                 setArticle({
-                    username: articleResponse.user,
-                    title: articleResponse.title,
-                    tag: articleResponse.tag,
+                    username: articleData.user,
+                    title: articleData.title,
+                    tag: articleData.tag,
                     thumbnail: imageUrl,
-                    content: articleResponse.content,
+                    content: articleData.content,
                 });
             } catch (error: any) {
                 setLoading(true);
@@ -76,13 +86,22 @@ export default function ArticlePage() {
             <PageTransition />
             <NavbarLogin />
             <div className="w-full max-w-4xl mx-auto p-4">
-                <DynamicBreadcrumbs list={breadcrumbItems} />
+                <div className="flex justify-between items-center">
+                    <DynamicBreadcrumbs list={breadcrumbItems} />
+                    {edit ? (
+                        <Link href={`/${params.id}/edit`}>
+                            <Button variant="secondary">Edit</Button>
+                        </Link>
+                    ) : (
+                        ""
+                    )}
+                </div>
                 <h1 className="font-bold text-2xl sm:text-4xl mb-3 sm:mb-4">
                     {article.title}
                 </h1>
                 <div className="flex items-center gap-3">
                     <span className="sm:text-lg font-semibold">
-                        {article.username}
+                        @{article.username}
                     </span>
                     <Badge>{article.tag}</Badge>
                 </div>
