@@ -18,8 +18,9 @@ To run the project locally, follow these steps:
 10. Install dependencies: `npm install`
 11. Then you need to create the database using Prisma: `npx prisma migrate dev`
 12. Name the migration whatever you like, for example, 'init'.
-13. Start the development server: `npm run dev`
-14. Go to your browser and type the URL `http://localhost:3000`
+13. Fill the database data with dummy data: `npm run seed`.
+14. Start the development server: `npm run dev`
+15. Go to your browser and type the URL `http://localhost:3000`
 
 ## Usage
 
