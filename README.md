@@ -29,13 +29,11 @@ To run the project locally, follow these steps:
 - **Profile Management**:
   - View your profile.
   - Share your profile.
-  - Update your profile bio.
 - **Article Management**:
-  - View articles.
-  - Search articles by title.
+  - Infinite article viewer.
+  - Search articles by title/tag.
   - Post articles.
   - Comment on articles.
-  - Select categories/tags for articles.
 
 ## Additional Information
 
