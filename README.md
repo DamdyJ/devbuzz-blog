@@ -2,6 +2,18 @@
 
 DevBuzz Blog is a full-stack blog website built with TypeScript, Express.js, JsonWebToken, Prisma, MySQL, XAMPP, inversify for the backend, and Next.js, Axios, and Zod for the frontend.
 
+![devbuzz-homepage](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/adfc4fe6-1a20-4ad0-b980-cf2ed91df5f2)
+## Table of Content
+- [Installation](#installation)
+- [Usage](#usage)
+- [Additional Information](#additional-information)
+- [Technologies Used](#technologies-used)
+- [Screenshot](#screenshot)
+  - [Article](#article)
+  - [Comment](#comment)
+  - [Post](#post)
+- [Contributors](#contributors)
+
 ## Installation
 
 To run the project locally, follow these steps:
@@ -17,9 +29,10 @@ To run the project locally, follow these steps:
 9. Navigate to the server directory: `cd server`
 10. Install dependencies: `npm install`
 11. Then you need to create the database using Prisma: `npx prisma migrate dev`
-12. Name the migration whatever you like, for example, 'init'.
-13. Start the development server: `npm run dev`
-14. Go to your browser and type the URL `http://localhost:3000`
+12. Name the migration whatever you like, for example, **init**.
+13. Fill the database data with dummy data: `npm run seed`.
+14. Start the development server: `npm run dev`
+15. Go to your browser and type the URL `http://localhost:3000`
 
 ## Usage
 
@@ -28,13 +41,11 @@ To run the project locally, follow these steps:
 - **Profile Management**:
   - View your profile.
   - Share your profile.
-  - Update your profile bio.
 - **Article Management**:
-  - View articles.
-  - Search articles by title.
+  - Infinite article viewer.
+  - Search articles by title/tag.
   - Post articles.
   - Comment on articles.
-  - Select categories/tags for articles.
 
 ## Additional Information
 
@@ -58,10 +69,17 @@ If you encounter any issues during installation or usage, please refer to the pr
 - Axios: A promise-based HTTP client for the browser and Node.js.
 - Zod: A TypeScript-first schema declaration and validation library.
 
+## Screenshot
+### Article
+![article-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/5497dab8-95b1-4daf-9da3-de70d7491b8e)
+
+### Comment
+![comment-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/125173b7-05f6-42b3-9d80-6d485978c0c5)
+
+### Post
+![post-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/9d04ee09-d112-499d-905a-bf86c7dbca5d)
+
 ## Contributors
 
 - [DamdyJ](https://github.com/DamdyJ)
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
