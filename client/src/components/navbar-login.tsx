@@ -36,8 +36,8 @@ export default function NavbarLogin({ onSearch }: any) {
     }, []);
     return (
         <>
-            <div className="w-full h-16 bg-black">
-                <nav className="flex max-w-5xl h-full mx-auto text-white justify-between items-center px-4">
+            <div className="w-full h-32 sm:h-16 bg-black">
+                <nav className="flex flex-wrap sm:flex-nowrap max-w-5xl h-full mx-auto text-white justify-between items-center px-4">
                     <Image
                         className="h-8 w-auto"
                         src={"/DevBuzz_Logo.svg"}
@@ -47,8 +47,11 @@ export default function NavbarLogin({ onSearch }: any) {
                         height={40}
                         sizes="(max-height: 40px)"
                     />
-                    <Search onSearch={onSearch} />
-                    <div className="flex gap-3 sm:gap-8">
+
+                    <div className="hidden sm:block sm:w-full">
+                        <Search onSearch={onSearch} />
+                    </div>
+                    <div className="flex gap-1 sm:gap-8">
                         <Link href={"/create"}>
                             <Button
                                 className="bg-transparant text-white"
@@ -61,11 +64,13 @@ export default function NavbarLogin({ onSearch }: any) {
                             <Avatar>
                                 <AvatarImage
                                     src={`/${profile.image}`}
-                                    alt="@shadcn"
+                                    alt="profle"
                                 />
-                                <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                         </Link>
+                    </div>
+                    <div className="w-full block sm:hidden">
+                        <Search onSearch={onSearch} />
                     </div>
                 </nav>
             </div>
