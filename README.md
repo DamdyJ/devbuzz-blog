@@ -11,6 +11,7 @@ DevBuzz Blog is a full-stack blog website built with TypeScript, Express.js, Jso
 - [Preview](#preview)
   - [Create new account](#create-new-account)
   - [Infinite Scroll](#infinite-scroll)
+  - [Search](#search)
   - [Article](#article)
   - [Comment](#comment)
   - [Post](#post)
