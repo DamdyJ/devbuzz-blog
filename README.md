@@ -8,7 +8,9 @@ DevBuzz Blog is a full-stack blog website built with TypeScript, Express.js, Jso
 - [Usage](#usage)
 - [Additional Information](#additional-information)
 - [Technologies Used](#technologies-used)
-- [Screenshot](#screenshot)
+- [Preview](#preview)
+  - [Create new account](#create-new-account)
+  - [Infinite Scroll](#infinite-scroll)
   - [Article](#article)
   - [Comment](#comment)
   - [Post](#post)
@@ -69,12 +71,21 @@ If you encounter any issues during installation or usage, please refer to the pr
 - Axios: A promise-based HTTP client for the browser and Node.js.
 - Zod: A TypeScript-first schema declaration and validation library.
 
-## Screenshot
+## Preview
+### Create new account
+![signup](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/7fb770ef-901e-46bb-bd6e-883e78bc4eb1)
+
+### Infinite Scroll
+![infinite-scrolling](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/5b8152c6-fe77-4282-877b-fde48041d757)
+
+### Search
+![search](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/5df0ae32-b100-4007-9f9a-6649b9ffb2ed)
+
 ### Article
 ![article-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/5497dab8-95b1-4daf-9da3-de70d7491b8e)
 
 ### Comment
-![comment-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/125173b7-05f6-42b3-9d80-6d485978c0c5)
+![comment](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/797b0ff7-fd88-4351-be96-a815bd0443a6)
 
 ### Post
 ![post-section](https://github.com/DamdyJ/devbuzz-blog/assets/152348339/9d04ee09-d112-499d-905a-bf86c7dbca5d)
