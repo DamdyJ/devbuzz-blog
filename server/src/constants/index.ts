@@ -1,6 +1,6 @@
 export const TOKEN = {
-    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET as string,
-    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET as string,
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET!,
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET!,
 };
 
 export const PROFILE = {
