@@ -16,8 +16,10 @@ export const ArticleSchema = z.object({
         message: "Title must not be longer than 50 characters.",
     }),
     thumbnail: z.string(),
-    tag: z.nativeEnum(Tag),
+    tag: z.nativeEnum(Tag).default(Tag.DEFAULT),
     content: z.string().max(5000, {
         message: "Content must not be longer than 5000 characters.",
     }),
 });
+
+export type Article = z.infer<typeof ArticleSchema>;
