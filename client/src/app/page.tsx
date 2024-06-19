@@ -1,87 +1,18 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchGetAllArticles } from "@/api/get-all-articles";
 import ArticleCardList from "@/components/article-card-list";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Badge } from "@/components/ui/badge";
-import formatDate from "@/utils/date-formatter";
-import Image from "next/image";
 import PageTransition from "@/components/page-transition";
-import Link from "next/link";
 import NavbarLogin from "@/components/navbar-login";
 import Loading from "@/components/loading";
+import MostRecentArticle from "@/components/most-recent-article";
 import useAuth from "@/hooks/useAuth";
+import useArticles from "@/hooks/useArticles";
 
 export default function ArticlesPage() {
     const { authenticated } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [articles, setArticles] = useState([]);
-    const [hasMore, setHasMore] = useState(true);
-    const [page, setPage] = useState(1);
-    const [searchInput, setSearchInput] = useState("");
-    const [loadingExceeded, setLoadingExceeded] = useState(false);
-    const [topArticle, setTopArticle] = useState<Article | null>(null);
-    const handleSearchInputChange = (value: string) => {
-        setSearchInput(value);
-        setPage(1);
-        setArticles([]);
-        setTopArticle(null);
-    };
-
-    useEffect(() => {
-        let timer = setTimeout(() => {
-            setLoadingExceeded(true);
-        }, 3000);
-        const fetchData = async () => {
-            try {
-                const response = await fetchGetAllArticles(
-                    10,
-                    page,
-                    searchInput
-                );
-                clearTimeout(timer);
-                const processedArticles = response.map((article: any) => {
-                    const splitUrl = article.thumbnail.split("\\");
-                    const imageUrl = splitUrl[splitUrl.length - 1];
-                    return {
-                        ...article,
-                        thumbnail: imageUrl,
-                    };
-                });
-
-                if (response.length === 0) {
-                    setHasMore(false);
-                } else {
-                    setTopArticle(processedArticles[0]);
-                    setArticles((prevArticles) =>
-                        prevArticles.concat(processedArticles.slice(1))
-                    );
-                }
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching articles:", error);
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-        return () => clearTimeout(timer);
-    }, [page, searchInput]);
-
-    const fetchMoreData = () => {
-        setTimeout(() => {
-            setPage((prevPage) => prevPage + 1);
-        }, 1500);
-    };
-    interface Article {
-        id: string;
-        title: string;
-        thumbnail: string;
-        username: string;
-        tag: string;
-        created_at: string;
-    }
+    const { articles, topArticle, hasMore, fetchMoreData, handleSearchInputChange, loading, loadingExceeded } = useArticles();
 
     if (loading) {
         return <Loading />;
@@ -90,54 +21,15 @@ export default function ArticlesPage() {
     if (!authenticated) {
         return null;
     }
+
     return (
         <>
             <PageTransition />
             <NavbarLogin onSearch={handleSearchInputChange} />
             <div className="grid grid-cols-1 w-full max-w-5xl px-4 mx-auto gap-4">
-                {topArticle && (
-                    <>
-                        <div className="font-semibold text-xl sm:text-3xl mt-4">
-                            Most Recent Article
-                        </div>
-                        <Link
-                            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                            href={`/${topArticle.id}`}
-                        >
-                            <AspectRatio ratio={16 / 9} className="bg-muted">
-                                <Image
-                                    className="rounded-md object-cover"
-                                    src={`/thumbnail/${topArticle.thumbnail}`}
-                                    alt={topArticle.thumbnail}
-                                    fill
-                                    priority
-                                    sizes="(max-width: 488px)"
-                                />
-                            </AspectRatio>
-                            <div className="flex flex-col justify-between">
-                                <h1 className="text-3xl sm:text-5xl font-bold">
-                                    {topArticle.title}
-                                </h1>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex gap-2">
-                                        <span className="font-semibold">
-                                            @{topArticle.username}
-                                        </span>
-                                        <Badge>{topArticle.tag}</Badge>
-                                    </div>
-                                    <span>
-                                        {formatDate(topArticle.created_at)}
-                                    </span>
-                                </div>
-                            </div>
-                        </Link>
-                        <div className="font-semibold text-xl sm:text-3xl mt-4">
-                            See More
-                        </div>
-                    </>
-                )}
+                {topArticle && <MostRecentArticle article={topArticle} />}
                 <InfiniteScroll
-                    className="grid gap-4 grid-cols-1 sm:grid-cols-2 "
+                    className="grid gap-4 grid-cols-1 sm:grid-cols-2"
                     dataLength={articles.length}
                     next={fetchMoreData}
                     hasMore={hasMore}
